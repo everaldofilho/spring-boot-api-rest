@@ -1,9 +1,12 @@
 package com.criativoweb.libraryapi.api.service;
 
+import com.criativoweb.libraryapi.api.dto.BookDTO;
 import com.criativoweb.libraryapi.api.exception.BusinessException;
 import com.criativoweb.libraryapi.api.model.entity.Book;
 import com.criativoweb.libraryapi.api.repository.BookRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -20,4 +23,27 @@ public class BookServiceImpl implements BookService {
         }
         return repository.save(book);
     }
+
+    @Override
+    public Optional<Book> getById(Long id) {
+        return this.repository.findById(id);
+    }
+
+    @Override
+    public void delete(Book book) {
+        if (book == null || book.getId() == null) {
+            throw new IllegalArgumentException("Book id cant be null.");
+        }
+        this.repository.delete(book);
+    }
+
+    @Override
+    public Book update(Book book) {
+        if (book == null || book.getId() == null) {
+            throw new IllegalArgumentException("Book id cant be null.");
+        }
+        return this.repository.save(book);
+    }
+
+
 }

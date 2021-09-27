@@ -11,6 +11,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @DataJpaTest
@@ -36,5 +38,44 @@ public class BookRepositoryTest {
 
         Assertions.assertThat(exists).isTrue();
     }
+
+
+    @Test
+    @DisplayName("Deve retorna o livro cadastrado")
+    public void findByIdTest(){
+
+        Book book = Book.builder()
+                .isbn("123")
+                .title("Aventuras")
+                .author("Fulano")
+                .build();
+        book =  entityManager.persist(book);
+        Optional<Book> bookOptional = repository.findById(book.getId());
+
+        Assertions.assertThat(bookOptional.isPresent()).isTrue();
+        Assertions.assertThat(bookOptional.get().getTitle()).isEqualTo("Aventuras");
+        Assertions.assertThat(bookOptional.get().getAuthor()).isEqualTo("Fulano");
+        Assertions.assertThat(bookOptional.get().getIsbn()).isEqualTo("123");
+    }
+
+    @Test
+    @DisplayName("Deve deletar o livro cadastrado")
+    public void deleteBookTest(){
+
+        Book book = Book.builder()
+                .isbn("123")
+                .title("Aventuras")
+                .author("Fulano")
+                .build();
+
+        entityManager.persist(book);
+        Assertions.assertThat(repository.findById(book.getId()).isPresent()).isTrue();
+
+        repository.delete(book);
+        Assertions.assertThat(repository.findById(book.getId()).isPresent()).isFalse();
+
+
+    }
+
 
 }
