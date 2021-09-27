@@ -13,6 +13,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @DataJpaTest
@@ -28,15 +30,11 @@ public class BookRepositoryTest {
     @DisplayName("Deve retorna verdadeiro quando existir um livro na base com isbn informado")
     public void returnTrueWhenIsbnExists(){
         String isbn = "123";
-        Book book = Book.builder()
-                .isbn(isbn)
-                .title("Aventuras")
-                .author("Fulano")
-                .build();
+        Book book = createNewBook(isbn);
         entityManager.persist(book);
         boolean exists = repository.existsByIsbn(isbn);
 
-        Assertions.assertThat(exists).isTrue();
+        assertThat(exists).isTrue();
     }
 
 
@@ -44,38 +42,60 @@ public class BookRepositoryTest {
     @DisplayName("Deve retorna o livro cadastrado")
     public void findByIdTest(){
 
-        Book book = Book.builder()
-                .isbn("123")
-                .title("Aventuras")
-                .author("Fulano")
-                .build();
+        Book book = createNewBook("123");
         book =  entityManager.persist(book);
         Optional<Book> bookOptional = repository.findById(book.getId());
 
-        Assertions.assertThat(bookOptional.isPresent()).isTrue();
-        Assertions.assertThat(bookOptional.get().getTitle()).isEqualTo("Aventuras");
-        Assertions.assertThat(bookOptional.get().getAuthor()).isEqualTo("Fulano");
-        Assertions.assertThat(bookOptional.get().getIsbn()).isEqualTo("123");
+        assertThat(bookOptional.isPresent()).isTrue();
+        assertThat(bookOptional.get().getTitle()).isEqualTo("Aventuras");
+        assertThat(bookOptional.get().getAuthor()).isEqualTo("Fulano");
+        assertThat(bookOptional.get().getIsbn()).isEqualTo("123");
+    }
+
+    private Book createNewBook(String isbn) {
+        return Book.builder()
+                .isbn(isbn)
+                .title("Aventuras")
+                .author("Fulano")
+                .build();
     }
 
     @Test
     @DisplayName("Deve deletar o livro cadastrado")
     public void deleteBookTest(){
 
-        Book book = Book.builder()
-                .isbn("123")
-                .title("Aventuras")
-                .author("Fulano")
-                .build();
+        Book book = createNewBook("123");
 
         entityManager.persist(book);
-        Assertions.assertThat(repository.findById(book.getId()).isPresent()).isTrue();
+        assertThat(repository.findById(book.getId()).isPresent()).isTrue();
 
         repository.delete(book);
-        Assertions.assertThat(repository.findById(book.getId()).isPresent()).isFalse();
-
-
+        assertThat(repository.findById(book.getId()).isPresent()).isFalse();
     }
 
+    @Test
+    @DisplayName("Deve salvar o livro")
+    public void saveBookTest() {
+        Book book = createNewBook("126");
+
+        Book savedBook = repository.save(book);
+
+        assertThat(savedBook.getId()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Deve atualizar o livro")
+    public void updatedBookTest() {
+        Book book = createNewBook("126");
+
+        Book savedBook = repository.save(book);
+        savedBook.setTitle("Outro Titulo");
+        repository.save(savedBook);
+
+        Optional<Book> bookOptional = repository.findById(savedBook.getId());
+
+        assertThat(bookOptional.isPresent()).isTrue();
+        assertThat(bookOptional.get().getTitle()).isEqualTo("Outro Titulo");
+    }
 
 }
