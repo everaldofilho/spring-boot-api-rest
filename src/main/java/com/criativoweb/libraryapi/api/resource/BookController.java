@@ -8,6 +8,10 @@ import com.criativoweb.libraryapi.api.model.entity.Book;
 import com.criativoweb.libraryapi.api.model.entity.Loan;
 import com.criativoweb.libraryapi.api.service.BookService;
 import com.criativoweb.libraryapi.api.service.LoanService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
+@Api("Book API")
 public class BookController {
 
     private final BookService service;
@@ -37,6 +42,7 @@ public class BookController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("CREATE A BOOK")
     public BookDTO create(@Valid @RequestBody BookDTO dto) {
         Book entity = modelMapper.map(dto, Book.class);
         entity = service.save(entity);
@@ -44,6 +50,7 @@ public class BookController {
     }
 
     @GetMapping("{id}")
+    @ApiOperation("Obtains a book details by id")
     public BookDTO get(@PathVariable Long id) {
         return service.getById(id).map(book -> modelMapper.map(book, BookDTO.class))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -51,12 +58,17 @@ public class BookController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Delete book")
+    @ApiResponses({
+            @ApiResponse(code=204, message="Book succesfully deleted")
+    })
     public void delete(@PathVariable Long id) {
         Book book = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         service.delete(book);
     }
 
     @PutMapping("{id}")
+    @ApiOperation("Update Book")
     public BookDTO update(@PathVariable Long id, @Valid @RequestBody BookDTO dto) {
         return service.getById(id).map(book -> {
             book.setAuthor(dto.getAuthor());
