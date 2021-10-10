@@ -1,6 +1,5 @@
 package com.criativoweb.libraryapi.api.service;
 
-import com.criativoweb.libraryapi.api.dto.BookDTO;
 import com.criativoweb.libraryapi.api.model.entity.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

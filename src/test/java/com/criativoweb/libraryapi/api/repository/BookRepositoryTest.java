@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -53,7 +52,7 @@ public class BookRepositoryTest {
         assertThat(bookOptional.get().getIsbn()).isEqualTo("123");
     }
 
-    private Book createNewBook(String isbn) {
+    static Book createNewBook(String isbn) {
         return Book.builder()
                 .isbn(isbn)
                 .title("Aventuras")

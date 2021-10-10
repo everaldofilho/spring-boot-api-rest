@@ -1,6 +1,5 @@
 package com.criativoweb.libraryapi.api.service;
 
-import com.criativoweb.libraryapi.api.dto.BookDTO;
 import com.criativoweb.libraryapi.api.exception.BusinessException;
 import com.criativoweb.libraryapi.api.model.entity.Book;
 import com.criativoweb.libraryapi.api.repository.BookRepository;
